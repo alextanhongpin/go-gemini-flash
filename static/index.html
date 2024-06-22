@@ -1,0 +1,12 @@
+<head>
+  <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js"></script>
+  <script src="https://unpkg.com/htmx-ext-sse@2.0.0/sse.js"></script>
+</head>
+<body>
+  <h1>Gemini Flash Demo</h1>
+
+  <textarea placeholder="Enter your prompt" name="prompt"></textarea>
+  <button hx-post="/button" hx-include='[name="prompt"]' hx-swap="outerHTML">
+    Submit
+  </button>
+</body>
