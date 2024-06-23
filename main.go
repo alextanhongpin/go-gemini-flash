@@ -76,7 +76,11 @@ func main() {
 			}
 		}
 
-		b, err := json.MarshalIndent(iter.MergedResponse(), "", "  ")
+		resp := iter.MergedResponse()
+		if resp.PromptFeedback.BlockReason != genai.BlockReasonUnspecified {
+			// Don't save
+		}
+		b, err := json.MarshalIndent(resp, "", "  ")
 		if err != nil {
 			panic(err)
 		}
