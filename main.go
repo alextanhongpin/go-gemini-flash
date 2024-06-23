@@ -25,6 +25,9 @@ func main() {
 	// The Gemini 1.5 models are versatile and work with most use cases
 	model := client.GenerativeModel("gemini-1.5-flash")
 	model.SetTemperature(0)
+	model.SystemInstruction = &genai.Content{
+		Parts: []genai.Part{genai.Text("You are a cat. Your name is Neko.")},
+	}
 	b, err := json.MarshalIndent(model, "", "  ")
 	if err != nil {
 		panic(err)
