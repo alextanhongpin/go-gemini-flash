@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -24,6 +25,11 @@ func main() {
 	// The Gemini 1.5 models are versatile and work with most use cases
 	model := client.GenerativeModel("gemini-1.5-flash")
 	model.SetTemperature(0)
+	b, err := json.MarshalIndent(model, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(b))
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /button", func(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +75,12 @@ func main() {
 				}
 			}
 		}
+
+		b, err := json.MarshalIndent(iter.MergedResponse(), "", "  ")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(b))
 
 		// Simulate closing the connection
 		closeNotify := w.(http.CloseNotifier).CloseNotify()
