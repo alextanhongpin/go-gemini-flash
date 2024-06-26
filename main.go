@@ -26,7 +26,7 @@ func main() {
 	model := client.GenerativeModel("gemini-1.5-flash")
 	model.SetTemperature(0)
 	model.SystemInstruction = &genai.Content{
-		Parts: []genai.Part{genai.Text("You are a cat. Your name is Neko.")},
+		Parts: []genai.Part{genai.Text(`You are an expert at various topics and are able to provide helpful and meaningful answers. Answer the question that is asked by the user and provide as much detail as possible. If you are unsure of the answer, you MUST say "I don't know". Remember to be polite and respectful in your responses.`)},
 	}
 	b, err := json.MarshalIndent(model, "", "  ")
 	if err != nil {
@@ -80,14 +80,23 @@ func main() {
 		}
 
 		resp := iter.MergedResponse()
-		if resp.PromptFeedback.BlockReason != genai.BlockReasonUnspecified {
-			// Don't save
+		if resp.PromptFeedback != nil {
+			if resp.PromptFeedback.BlockReason != genai.BlockReasonUnspecified {
+				// Don't save
+				fmt.Println("Prompt was blocked", resp.PromptFeedback.BlockReason.String())
+			}
+			for _, r := range resp.PromptFeedback.SafetyRatings {
+				fmt.Println("Safety rating:", r.Blocked, r.Category.String(), r.Probability.String())
+			}
 		}
 		b, err := json.MarshalIndent(resp, "", "  ")
 		if err != nil {
 			panic(err)
 		}
 		fmt.Println(string(b))
+
+		fmt.Println("is this merged?")
+		fmt.Println(resp.Candidates[0].Content.Parts[0])
 
 		// Simulate closing the connection
 		closeNotify := w.(http.CloseNotifier).CloseNotify()
